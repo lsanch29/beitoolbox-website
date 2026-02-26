@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Download | BEI Toolbox</title>
+  <link rel="stylesheet" href="bei.css"/>
+  <style>
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(11,16,32,.92);
+      backdrop-filter:saturate(140%) blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .logo{ font-weight:800; letter-spacing:.01em; }
+    .navlinks{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .navlinks a{ padding:8px 10px; border-radius:10px; }
+    .navlinks a:hover{ background:#0f1730; text-decoration:none; }
+
+    .page{ max-width:1100px; margin:0 auto; padding:34px 18px 42px; }
+    .btn{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#0f1730;
+      color:var(--text);
+      text-decoration:none;
+      font-weight:600;
+    }
+    .btn:hover{ text-decoration:none; filter:brightness(1.07); }
+    .btn.primary{
+      border-color:rgba(61,220,151,.55);
+      box-shadow:0 0 0 1px rgba(61,220,151,.18) inset;
+    }
+    .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; align-items:start; }
+    @media (max-width: 920px){ .grid{ grid-template-columns:1fr; } }
+
+    .card{
+      background:var(--code);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px 14px;
+    }
+    .muted{ color:var(--muted); }
+    .kblock{
+      background:#0a0f22;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px 12px;
+      color:var(--muted);
+      overflow:auto;
+    }
+    .footerline{
+      margin-top:34px;
+      padding-top:18px;
+      border-top:1px solid var(--border);
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:10px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">BEI Toolbox</div>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="download.html">Download</a>
+      <a href="docs/index.html">Documentation</a>
+      <a href="docs/sections/license-citation.html">License</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <h1>Download BEI Toolbox</h1>
+  <p class="muted">
+    BEI Toolbox is distributed openly. No account is required. Use the GitHub release packages for stable versions.
+  </p>
+
+  <div class="grid">
+    <section class="card">
+      <h2 style="margin-top:0;">Latest release</h2>
+      <p class="muted" style="margin-top:6px;">
+        Download the most recent stable release from GitHub Releases.
+      </p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 0;">
+        <a class="btn primary" href="https://github.com/&lt;YOUR_GITHUB_ORG_OR_USER&gt;/beitoolbox-code/releases/latest">
+          Download (GitHub Releases)
+        </a>
+        <a class="btn" href="https://github.com/&lt;YOUR_GITHUB_ORG_OR_USER&gt;/beitoolbox-code">
+          View source repository
+        </a>
+      </div>
+
+      <div class="callout" style="margin-top:16px;">
+        <b>Recommended:</b> use tagged releases for published results so your analyses are traceable to a specific version.
+      </div>
+
+      <h2>Install</h2>
+      <ol class="muted">
+        <li>Download the release zip and unzip it to a local folder.</li>
+        <li>In MATLAB, add the toolbox folder to your path.</li>
+        <li>Launch the GUI and follow the workflow in the documentation.</li>
+      </ol>
+
+      <div class="kblock" aria-label="MATLAB path example">
+<pre style="margin:0; white-space:pre-wrap;">
+% Example: add BEI Toolbox to the MATLAB path (edit the folder)
+addpath(genpath('/path/to/BEItoolbox'));
+savepath;
+</pre>
+      </div>
+
+      <p class="muted" style="margin-top:12px;">
+        Then open <a href="docs/sections/getting-started.html">Getting started</a> for the first end to end run.
+      </p>
+    </section>
+
+    <aside class="card">
+      <h2 style="margin-top:0;">Release notes and older versions</h2>
+      <p class="muted">
+        For prior versions, checksums, and detailed changes, use the GitHub Releases page.
+      </p>
+      <p style="margin-top:12px;">
+        <a class="btn" href="https://github.com/&lt;YOUR_GITHUB_ORG_OR_USER&gt;/beitoolbox-code/releases">All releases</a>
+      </p>
+
+      <hr/>
+
+      <h2>Support</h2>
+      <p class="muted">
+        For issues and feature requests, use GitHub Issues. For general questions, email support.
+      </p>
+      <ul class="muted">
+        <li><a href="mailto:support@beitoolbox.org">support@beitoolbox.org</a></li>
+        <li><a href="https://github.com/&lt;YOUR_GITHUB_ORG_OR_USER&gt;/beitoolbox-code/issues">GitHub Issues</a></li>
+      </ul>
+
+      <hr/>
+
+      <h2>License and citation</h2>
+      <p class="muted">
+        Please follow the license terms and citation guidance when publishing results.
+      </p>
+      <p>
+        <a class="btn" href="docs/sections/license-citation.html">License and citation</a>
+      </p>
+    </aside>
+  </div>
+
+  <section class="footerline">
+    <div>Developed at Johns Hopkins University, Neuro Medical Control Systems Lab.</div>
+    <div>Contact: <a href="mailto:support@beitoolbox.org">support@beitoolbox.org</a></div>
+  </section>
+</main>
+
+</body>
+</html>
