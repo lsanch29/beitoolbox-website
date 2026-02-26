@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BEI Toolbox Documentation</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox Documentation</div>
+    <div class="version"><a href="../index.html">beitoolbox.org</a></div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a class="active" href="index.html">Documentation home</a>
+      <a href="sections/overview.html">Overview</a>
+      <a href="sections/core-concepts.html">Core concepts</a>
+      <a href="sections/menus.html">Menus</a>
+      <a href="sections/getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="sections/datasets.html">Datasets</a>
+      <a href="sections/studies.html">Studies</a>
+      <a href="sections/preprocessing.html">Preprocessing</a>
+      <a href="sections/subject_level_analysis.html">Subject-level analysis</a>
+      <a href="sections/energy_metrics.html">Energy metrics</a>
+      <a href="sections/population_level_analysis.html">Population-level analysis</a>
+      <a href="sections/models_and_testing.html">Models and testing</a>
+      <a href="sections/internal_datasets.html">Internal datasets</a>
+      <a href="sections/registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="sections/faq.html">FAQ and troubleshooting</a>
+      <a href="sections/license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <h1>Documentation</h1>
+
+    <p>
+      This documentation describes how to use the Brain Entropy Index (BEI) Toolbox to load datasets,
+      preprocess signals, compute energy-based metrics, visualize subject-level and population-level behavior,
+      and evaluate predictive models. The content is written to map directly to the BEI Toolbox GUI workflow.
+    </p>
+
+    <div class="callout">
+      <b>Core idea:</b> BEI Toolbox separates <i>pointer-based data organization</i> (Datasets, Studies) from
+      <i>processing state</i> (registries) and from <i>derived products and outputs</i>
+      (PDI, PDO, testing results, and plots).
+    </div>
+
+    <h2>Recommended path</h2>
+    <ol>
+      <li><a href="sections/overview.html">Overview</a></li>
+      <li><a href="sections/core-concepts.html">Core concepts</a></li>
+      <li><a href="sections/menus.html">Menus</a></li>
+      <li><a href="sections/getting-started.html">Getting started</a></li>
+    </ol>
+
+    <h2>Download and install</h2>
+    <p>
+      For stable versions and installation steps, use the public download page:
+      <a href="../download.html">Download BEI Toolbox</a>.
+    </p>
+
+    <hr/>
+
+    <h2>Terminology used in this documentation</h2>
+    <table class="table">
+      <tr>
+        <th>Term</th>
+        <th>Meaning in BEI Toolbox</th>
+      </tr>
+      <tr>
+        <td><b>Dataset</b></td>
+        <td>
+          A lightweight definition that points to where the raw data live and how they should be interpreted
+          (modality and diagnosis). The dataset file is saved under <code>datasets_store/&lt;dataset-modality-diagnosis&gt;/</code>.
+          Raw data are not replicated.
+        </td>
+      </tr>
+      <tr>
+        <td><b>Study</b></td>
+        <td>
+          A user-defined grouping of two or more datasets for population-level analysis and model evaluation.
+          The study file is saved under <code>study_store/&lt;study-name&gt;/</code>. It stores pointers to datasets
+          and does not replicate raw data.
+        </td>
+      </tr>
+      <tr>
+        <td><b>PDI</b></td>
+        <td>
+          Product Data Input created after successful preprocessing of a dataset and stored in the dataset
+          <code>PDI/</code> directory. The PDI contains a <code>patient_data</code> structure with one entry per participant.
+        </td>
+      </tr>
+      <tr>
+        <td><b>PDO</b></td>
+        <td>
+          Product Data Output created after successful energy-metrics calculations for a study and stored in the study
+          <code>PDO/</code> directory. The PDO contains an <code>outputest</code> structure with one entry per participant.
+        </td>
+      </tr>
+      <tr>
+        <td><b>Testing results</b></td>
+        <td>
+          Output of model testing stored in <code>testing_store/</code> as <code>BEI_TestResults_&lt;StudyName&gt;.mat</code>.
+          Contains the <code>BEI_TestResults</code> table with labels, predictions, BEI scores, metrics, and evaluation summaries.
+        </td>
+      </tr>
+      <tr>
+        <td><b>Registry</b></td>
+        <td>
+          Persistent state stored in the BEI Toolbox memory that tracks the state of each dataset and study and which menus should be enabled
+          (preprocessing, energy metrics, testing).
+        </td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      Tip: In the website repo, keep documentation pages under <code>/docs/</code>. In the MATLAB distribution, you can keep a copy inside the toolbox so the docs match the installed version.
+    </div>
+  </main>
+</div>
+</body>
+</html>
