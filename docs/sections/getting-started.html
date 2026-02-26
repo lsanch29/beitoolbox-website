@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Getting started | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Getting started</div>
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+        <a href="core-concepts.html">Core concepts</a>
+        <a href="menus.html">Menus</a>
+      <a class="active" href="getting-started.html">Getting started</a>
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject-level.html">Subject-level analysis</a>
+      <a href="energy-metrics.html">Energy metrics</a>
+      <a href="population.html">Population-level analysis</a>
+      <a href="models-testing.html">Models and testing</a>
+      <a href="internal-datasets.html">Internal datasets</a>
+      <a href="registries-reproducibility.html">Registries and reproducibility</a>
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <h1>Getting started</h1>
+
+    <p>
+      This section describes the recommended workflow in the order you typically use the BEI Toolbox menus.
+      Menu names may vary slightly by version, but the state gates and dependencies are the same.
+    </p>
+
+    <h2>Step 1. Load datasets</h2>
+    <ul>
+      <li>Use the dataset loading menu to register one or more datasets.</li>
+      <li>Confirm each dataset appears in the GUI and the info panel shows dataset name, modality, and subject count.</li>
+    </ul>
+
+    <div class="note">
+      Loading a dataset does not imply it is preprocessed. It only registers the dataset and its subject list.
+    </div>
+
+    <h2>Step 2. Preprocess datasets</h2>
+    <ul>
+      <li>Open the Preprocessing menu.</li>
+      <li>Select a dataset and run preprocessing.</li>
+      <li>After completion, the preprocessing registry marks it as Preprocessed, and downstream menus enable accordingly.</li>
+    </ul>
+
+    <h2>Step 3. Inspect subject-level plots</h2>
+    <ul>
+      <li>Open Plot or Metrics menu and navigate to subject-level analysis.</li>
+      <li>Inspect energy PDF and covariance summaries for multiple subjects.</li>
+      <li>Use these plots as quality control and to validate assumptions before population inference.</li>
+    </ul>
+
+    <h2>Step 4. Create a study with 2 or more datasets</h2>
+    <ul>
+      <li>Use the Study menu to define a study by selecting two or more datasets.</li>
+      <li>Ensure study subject counts reflect the included datasets plus any internal datasets (if enabled).</li>
+    </ul>
+
+    <div class="callout">
+      <b>Important:</b> population-level plots and model evaluation are designed around studies because studies define the cohort and grouping logic.
+    </div>
+
+    <h2>Step 5. Compute energy metrics for the study</h2>
+    <ul>
+      <li>Run energy metrics computation at the study level.</li>
+      <li>This populates study-level derived outputs used for population plots and optional model workflows.</li>
+      <li>The energy registry marks the study as complete for those metrics.</li>
+    </ul>
+
+    <h2>Step 6. Generate population-level plots</h2>
+    <ul>
+      <li>Open population metrics plots.</li>
+      <li>Choose a study, then choose metrics such as LL, EED, coupling, variance-related measures, and brain stability.</li>
+      <li>Confirm group comparisons use correct diagnosis labels and include internal healthy controls if configured.</li>
+    </ul>
+
+    <h2>Step 7. Select a model, test, and evaluate</h2>
+    <ul>
+      <li>Select Model becomes enabled after prerequisites are met (typically preprocessing completion, and energy metrics readiness).</li>
+      <li>Load a model file that contains required variables (example: normalization parameters and ROC data).</li>
+      <li>Use Test Model on a dataset or a study.</li>
+      <li>Use model evaluation plots to calculate BEI scores, view ROC, calibration, and scatter summaries.</li>
+    </ul>
+
+    <div class="footer">
+      Use the next sections as detailed references for each step and its outputs.
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Functions | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Functions</div>
+    <nav class="nav">
+  <h3>Start here</h3>
+  <a href="../index.html">Home</a>
+  <a href="overview.html">Overview</a>
+  <a href="core-concepts.html">Core concepts</a>
+  <a href="menus.html">Menus</a>
+  <a href="getting-started.html">Getting started</a>
+  <h3>Using the toolbox</h3>
+  <a href="datasets.html">Datasets</a>
+  <a href="studies.html">Studies</a>
+  <a href="preprocessing.html">Preprocessing</a>
+  <a href="subject_level_analysis.html">Subject-level analysis</a>
+  <a href="energy_metrics.html">Energy metrics</a>
+  <a href="population_level_analysis.html">Population-level analysis</a>
+  <a href="models_and_testing.html">Models and testing</a>
+  <a href="internal_datasets.html">Internal datasets</a>
+  <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+  <h3>Help</h3>
+  <a class="active" href="functions.html">Functions</a>
+  <a href="faq.html">FAQ and troubleshooting</a>
+  <a href="license-citation.html">License and citation</a>
+
+    </nav>
+  </aside>
+
+  <main class="main">
+    <h1>Functions</h1>
+
+    <p>
+  This page summarizes the primary MATLAB functions and GUI callbacks that implement the BEI Toolbox workflow.
+  Names are shown exactly as they appear in the codebase.
+</p>
+
+    <h2>Core BEI functions</h2>
+
+    <table class="table">
+  <thead>
+    <tr><th>Function</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>define_dataset</code></td><td>Define and register a new dataset from raw data.</td></tr>
+    <tr><td><code>defineCohortCallback</code></td><td>Select datasets and define a cohort (study).</td></tr>
+    <tr><td><code>runPreprocessing</code></td><td>Run preprocessing pipeline for selected dataset.</td></tr>
+    <tr><td><code>energyMetricsCallback</code></td><td>Compute energy-based features for a dataset or study.</td></tr>
+    <tr><td><code>buildPreProcessingMenu</code></td><td>Dynamically build the preprocessing menu in the GUI.</td></tr>
+    <tr><td><code>updateInfoPanel</code></td><td>Update dataset/study information in the GUI panel.</td></tr>
+    <tr><td><code>save_patient_data</code></td><td>Save patient-level data structures to the PDI folder.</td></tr>
+  </tbody>
+</table>
+
+    <div class="note"><b>Tip:</b> If you are reading the code, search for each function name to see where it is called from the GUI menus and registry logic.</div>
+
+  </main>
+</div>
+</body>
+</html>

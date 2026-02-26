@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Overview | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Overview</div>
+    <nav class="nav">
+  <h3>Start here</h3>
+  <a href="../index.html">Home</a>
+  <a class="active" href="overview.html">Overview</a>
+  <a href="core-concepts.html">Core concepts</a>
+  <a href="menus.html">Menus</a>
+  <a href="getting-started.html">Getting started</a>
+  <h3>Using the toolbox</h3>
+  <a href="datasets.html">Datasets</a>
+  <a href="studies.html">Studies</a>
+  <a href="preprocessing.html">Preprocessing</a>
+  <a href="subject_level_analysis.html">Subject-level analysis</a>
+  <a href="energy_metrics.html">Energy metrics</a>
+  <a href="population_level_analysis.html">Population-level analysis</a>
+  <a href="models_and_testing.html">Models and testing</a>
+  <a href="internal_datasets.html">Internal datasets</a>
+  <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+  <h3>Help</h3>
+  <a href="faq.html">FAQ and troubleshooting</a>
+  <a href="license-citation.html">License and citation</a>
+</nav>
+  </aside>
+
+  <main class="main">
+    <h1>Overview</h1>
+
+    <p>
+      The BEI Toolbox is a MATLAB-based workflow for analyzing brain imaging signals using
+      energy-derived distributions and statistics. It is designed to support cross-dataset and cross-modality
+      analysis while enforcing reproducible processing states through registries.
+    </p>
+
+    <h2>Scope</h2>
+    <ul>
+      <li><b>Supported modalities:</b> EEG, MEG, and fMRI (through EEGLAB, FieldTrip, and SPM pipelines).</li>
+      <li><b>Supported analysis levels:</b> subject-level visualization and population-level statistics.</li>
+      <li><b>Model evaluation:</b> loading a pre-trained model and testing it on datasets or studies.</li>
+    </ul>
+
+    <h2>Key data products</h2>
+    <ul>
+      <li><b>PDI</b> (Product Data Input): dataset-level preprocessing output containing <code>patient_data</code>.</li>
+      <li><b>PDO</b> (Product Data Output): study-level energy metrics output containing <code>outputest</code>.</li>
+      <li><b>Testing results</b>: <code>BEI_TestResults</code> table saved per study under <code>testing_store/</code>.</li>
+    </ul>
+
+    <div class="callout">
+      <b>Design principle:</b> BEI Toolbox is pointer-based. Datasets and studies organize where data live without copying raw recordings.
+      Registries track processing state (preprocessed, metrics computed, tested), and derived products are saved explicitly as PDI, PDO,
+      and testing results.
+    </div>
+
+
+    <h2>Scientific grounding of the energy view</h2>
+    <p>
+      BEI Toolbox treats windowed energy correlates as empirical distributions that can be compared
+      across channels, regions, and cohorts. This allows measurement of properties such as distributional form,
+      equality of energy allocation across regions, coupling behavior, variance structure and stability.
+    </p>
+
+    <h2>What BEI Toolbox does not do</h2>
+    <ul>
+      <li>It does not replace clinical diagnosis or clinical interpretation.</li>
+      <li>It does not automatically guarantee artifact-free signals; it provides pipelines and quality control visualization.</li>
+      <li>It does not train models (before version 2.0) by default unless you explicitly run the training workflow outside the GUI and save a model file.</li>
+    </ul>
+
+    <div class="note">
+      Terminology note: energy here refers to an energy-like signal measure derived from the recorded neural correlate.
+      It is a consistent operational definition for analysis and comparison, not a direct measurement of biophysical metabolic energy.
+    </div>
+
+    <div class="footer">
+      Next: read <a href="core-concepts.html">Core concepts</a> to understand datasets, studies, internal datasets, and registries.
+    </div>
+  </main>
+</div>
+</body>
+</html>

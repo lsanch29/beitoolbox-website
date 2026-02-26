@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Registries and reproducibility | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+<aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Registries and reproducibility</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a class="active" href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+  <main class="main">
+<div class="breadcrumb">User Manual / Registries and Reproducibility</div>
+    <h1>Registries and Reproducibility</h1>
+    <p>
+      Registries are the toolbox mechanism for tracking pipeline state across GUI interactions.
+      They provide a single source of truth for whether a dataset or study has been preprocessed, has energy artifacts,
+      or has been tested with a model. Registries also support reproducibility by linking status to persistent outputs.
+    </p>
+
+    <h2 id="role">Role of registries</h2>
+    <p>
+      In a GUI-driven scientific workflow, state can become fragmented across callbacks, cached structs, and file system artifacts.
+      Registries solve this by enforcing:
+    </p>
+    <ul>
+      <li><span class="k">Centralization:</span> one authoritative status store per workflow stage.</li>
+      <li><span class="k">Auditability:</span> status can be printed, inspected, and saved.</li>
+      <li><span class="k">Deterministic enabling:</span> menus are enabled based on registry state, not on ad hoc flags.</li>
+    </ul>
+
+    <h2 id="types">Registry types</h2>
+    <p>
+      The toolbox uses three primary registries stored in figure appdata:
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="k">BEI_preproc_reg</div>
+        <p class="muted">
+          Tracks whether a dataset or study input has valid preprocessing outputs available.
+        </p>
+      </div>
+      <div class="card">
+        <div class="k">BEI_energy_reg</div>
+        <p class="muted">
+          Tracks whether a study has computed energy artifacts (PDFs, covariance, cached features).
+        </p>
+      </div>
+      <div class="card">
+        <div class="k">BEI_testing_reg</div>
+        <p class="muted">
+          Tracks whether a dataset or study has been evaluated with a selected model and where results were saved.
+        </p>
+      </div>
+      <div class="card">
+        <div class="k">Registry manager</div>
+        <p class="muted">
+          A small utility (for example <code>bei_registry</code>) mediates get, set, update, and remove operations.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="schema">Record schema</h2>
+    <p>
+      Each registry stores an array of records. A minimal record schema is:
+    </p>
+
+    <pre><code>record.ObjectName   % string key, usually "DATASET|MODALITY|DIAG" or "STUDY|&lt;NAME&gt;"
+record.Status       % string label, for example "Preprocessed", "EnergyReady", "Tested"
+record.UpdatedAt    % timestamp (recommended)
+record.ArtifactPath % path to PDO/PDI/energy/testing output (recommended)</code></pre>
+
+    <p>
+      The critical scientific property is <span class="k">key stability</span>. The same object should map to the same registry key
+      across sessions, so the GUI can correctly infer what work has already been completed.
+    </p>
+
+    <h2 id="provenance">Provenance</h2>
+    <p>
+      Registries should not replace provenance in output files. Instead, they should point to artifacts that carry full provenance.
+      At minimum, output artifacts should store:
+    </p>
+    <ul>
+      <li>Toolbox version string</li>
+      <li>Timestamp</li>
+      <li>Configuration parameters relevant to the artifact</li>
+      <li>Resolved cohort membership identifiers (for PDI and testing results)</li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="k">Avoid stale cached fields</div>
+      <p class="muted" style="margin:6px 0 0;">
+        Cached <code>processingStatus</code> fields inside dataset structs can drift from reality.
+        Use registries as the enabling logic and treat cached fields as display-only.
+      </p>
+    </div>
+
+    <h2 id="repro">Reproducible sessions</h2>
+    <p>
+      A reproducible analysis session is one where:
+    </p>
+    <ul>
+      <li>All required dependencies are detected (MATLAB toolboxes and external toolboxes such as EEGLAB, SPM12, FieldTrip).</li>
+      <li>Inputs are resolved through stable dataset and study definitions.</li>
+      <li>All derived artifacts are versioned and stored under predictable folders.</li>
+      <li>Registries correctly point to the latest artifacts and can be printed for audit logs.</li>
+    </ul>
+
+    <div class="callout">
+      <div class="k">Next</div>
+      <p class="muted" style="margin:6px 0 0;">
+        If something goes wrong, start with the <a href="faq.html">FAQ</a> to diagnose common issues.
+      </p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

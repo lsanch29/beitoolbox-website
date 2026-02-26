@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>FAQ and troubleshooting | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+<aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">FAQ and troubleshooting</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a class="active" href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+  <main class="main">
+<div class="breadcrumb">User Manual / FAQ</div>
+    <h1>FAQ</h1>
+
+    <h2 id="deps">Why does the toolbox refuse to start?</h2>
+    <p>
+      The toolbox performs dependency checks for required MATLAB products and external toolboxes.
+      If a dependency is missing, it exits early to avoid producing silently invalid outputs.
+      Ensure that required products are installed and that EEGLAB, SPM12, and FieldTrip are on the MATLAB path.
+    </p>
+
+    <h2 id="counts">Why do different menus show different subject counts for the same study?</h2>
+    <p>
+      This typically happens when one menu computes counts from the currently loaded dataset structs while another menu
+      uses the study PDI snapshot. The correct source of truth for a study is the resolved PDI, including internal controls.
+      Update plotting menus to compute denominators from PDI membership rather than dataset lists.
+    </p>
+
+    <h2 id="empty">I get table assignment errors during testing or plotting. What is the likely cause?</h2>
+    <p>
+      A common cause is an uninitialized or empty struct entry appended to a PDI or results array.
+      Downstream code often assumes each entry has required fields (for example <code>patient_code</code>).
+      Fix the writer to filter out entries missing required fields before saving.
+    </p>
+
+    <div class="callout warn">
+      <div class="k">Quick diagnostic</div>
+      <p class="muted" style="margin:6px 0 0;">
+        Inspect the saved PDI or results file and confirm there are no trailing entries with empty fields.
+        If present, the cohort builder or results aggregator should be hardened.
+      </p>
+    </div>
+
+    <h2 id="eeglab">I installed EEGLAB but <code>which('eeglab')</code> says not found. Why?</h2>
+    <p>
+      EEGLAB must be added to the MATLAB path. Installing it on disk is not sufficient.
+      Add the EEGLAB folder (the one containing <code>eeglab.m</code>) to the path and save the path.
+      If the toolbox performs dependency checks at startup, rerun after the path update.
+    </p>
+
+    <h2 id="units">My MEG variance is unusually low. Is that expected?</h2>
+    <p>
+      Low variance can indicate correct unit scaling (for example femtotesla), but it can also indicate an accidental unit mismatch.
+      Verify the unit convention used by your loader and preprocessing pipeline, and ensure consistent units across subjects before pooling.
+      Unit mistakes can dominate energy metrics and distort coupling proxies.
+    </p>
+
+    <div class="callout">
+      <div class="k">More help</div>
+      <p class="muted" style="margin:6px 0 0;">
+        If an error message includes the function and line number, start by checking for inconsistent struct sizes,
+        missing fields, or empty cohort entries. These are the most common root causes in population workflows.
+      </p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

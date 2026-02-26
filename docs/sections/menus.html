@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>BEI Toolbox | Menus</title>
+<link href="../bei.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+<aside class="sidebar">
+<div class="brand">BEI Toolbox User Manual</div>
+<div class="version">Core concepts</div>
+<nav class="nav">
+<h3>Start here</h3>
+<a href="../index.html">Home</a>
+<a href="overview.html">Overview</a>
+<a class="active" href="core-concepts.html">Core concepts</a>
+<a href="menus.html">Menus</a>
+<a href="getting-started.html">Getting started</a>
+<h3>Using the toolbox</h3>
+<a href="datasets.html">Datasets</a>
+<a href="studies.html">Studies</a>
+<a href="preprocessing.html">Preprocessing</a>
+<a href="subject_level_analysis.html">Subject-level analysis</a>
+<a href="energy_metrics.html">Energy metrics</a>
+<a href="population_level_analysis.html">Population-level analysis</a>
+<a href="models_and_testing.html">Models and testing</a>
+<a href="internal_datasets.html">Internal datasets</a>
+<a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+<h3>Help</h3>
+<a href="faq.html">FAQ and troubleshooting</a>
+<a href="license-citation.html">License and citation</a>
+</nav>
+</aside>
+    <main class="main"><h1>Menus</h1><p>This page describes every top menu and submenu in the BEI Toolbox GUI and explains when items become available. Menu availability is driven by dataset and study status fields and by the presence of a loaded model.</p>
+        <h2>File</h2>
+        <p>
+            The File menu manages datasets and studies stored under the toolbox working directories.
+        </p>
+        <ul>
+            <li><strong>New Dataset</strong>: Define a dataset by selecting a root folder and assigning <code>name</code>, <code>modality</code>, and <code>patient_diagnosis</code>. The definition is saved under <code>datasets_store</code> as a versioned dataset file.</li>
+            <li><strong>Load Dataset</strong>: Load a previously saved dataset definition (<code>*_BEI_DS.mat</code>) from <code>datasets_store</code>. Loading refreshes the GUI registry, menus, and the Info Panel.</li>
+            <li><strong>Remove Dataset</strong>: Remove a loaded dataset from the current session. This disables dependent tools for that dataset until it is loaded again.</li>
+            <li><strong>New Study</strong>: Define a study that references two or more datasets. Studies are stored under <code>studies_store</code> and enable cross dataset population analysis.</li>
+            <li><strong>Load Study</strong>: Load a saved study definition from <code>studies_store</code>. Loading refreshes menus and enables study scoped analysis when energy metrics exist.</li>
+            <li><strong>Remove Study</strong>: Remove a loaded study from the current session.</li>
+        </ul>
+        <h2>Tools</h2>
+        <p>
+            Tools are grouped by analysis stage: preprocessing, energy metrics, plotting, and testing.
+        </p>
+        <h3>Pre-Processing</h3>
+        <p>
+            The Pre-Processing submenu is populated dynamically by <code>buildPreProcessingMenu.m</code>. Each entry represents one loaded dataset.
+       </p>
+        <ul>
+            <li>Each dataset entry is labeled as <code>[DATASET]: name – modality – diagnosis: N subjects - status</code>.</li>
+            <li>Selecting a dataset entry runs preprocessing for that dataset via <code>runPreprocessing</code>.</li>
+            <li>If no datasets are loaded, the menu shows <code>(No Datasets/Studies Available)</code> and is disabled.</li>
+        </ul>
+        <h3>Energy Metrics</h3>
+        <p>
+            The Energy Metrics submenu is populated by <code>buildEnergyMetricsMenu.m</code>. It can include both datasets and studies.
+        </p>
+        <ul>
+            <li><strong>Datasets</strong> appear only after they are preprocessed. A dataset must have <code>processingStatus = Preprocessed</code> to be listed.</li>
+            <li><strong>Studies</strong> can be listed whenever they exist in the session. Energy metrics can be calculated at study scope to support population analysis.</li>
+            <li>Each entry runs <code>energyMetricsCallback</code> and writes a versioned <code>PDO*_v*.mat</code> file containing <code>outputest</code>.</li>
+        </ul>
+        
+        <h3>Testing</h3>
+        <p>
+            The Testing menu is built by <code>buildTestingMenu.m</code> and has two steps: load a model, then test it on an eligible dataset or study.
+        </p>
+        <ul>
+            <li><strong>Select Model</strong>: Loads a previously trained model into the session. This item is enabled only when at least one eligible dataset or study exists.</li>
+            <li><strong>Test Model</strong>: A submenu populated with eligible test sets. It is enabled only after a model is loaded.</li>
+            <li><strong>Eligibility rules</strong>: datasets must be preprocessed and must have energy metrics; studies must have energy metrics.</li>
+            <li><strong>Test status for studies</strong>: derived from <code>BEI_TestResultsRegistry</code> stored in session appdata, not from files on disk.</li>
+        </ul>
+        <h2>Plot</h2>
+        <p>
+            The Plot menu provides plotting utilities. It is organized into Subject-Level, Population-Level, and Model Evaluation sections.
+        </p>
+        <ul>
+            <li><strong>Subject-Level</strong> → <strong>Energy PDF / Cov Matrix</strong>: Opens subject level plots driven by the latest PDI output for the selected dataset.</li>
+            <li><strong>Population-Level</strong>: Produces cohort wise box plots for selected metrics by reading the latest <code>PDO*_v*.mat</code> file and the <code>outputest</code> struct.</li>
+            <li><strong>Model Evaluation</strong>: Provides plots such as Population BEI, ROC and calibration, confusion matrix, clinical zones histogram, and forest plots.</li>
+        </ul>
+        <h2>Help</h2>
+        <p>
+            The Help menu opens the local user manual in your default web browser. Pages are designed to keep the left index visible for consistent navigation.
+        </p>
+        <ul>
+            <li>Home</li>
+            <li>Overview</li>
+            <li>Core Concepts</li>
+            <li>Menus</li>
+            <li>Getting Started</li>
+            <li>Datasets</li>
+            <li>Preprocessing</li>
+            <li>Studies</li>
+            <li>Internal Datasets</li>
+            <li>Energy Metrics</li>
+            <li>Subject-Level Analysis</li>
+            <li>Population-Level Analysis</li>
+            <li>Models and Testing</li>
+            <li>License and Citation</li>
+        </ul>
+        <h2>
+            Menu availability rules</h2>
+        <p>
+            Several menus reflect the state of the current session. The most common reasons an item is disabled are listed here.
+        </p>
+        <ul>
+            <li>No datasets loaded: preprocessing and dataset dependent plots show placeholder entries and are disabled.</li>
+            <li>Dataset not preprocessed: it will not appear in Energy Metrics and it cannot be used for testing.</li>
+            <li>Energy metrics not calculated: population plots and testing are not available for that dataset or study.</li>
+            <li>No model loaded: Test Model submenu remains disabled even if eligible test sets exist.</li>
+        </ul>
+    </main>
+</div>
+</body>
+</html>

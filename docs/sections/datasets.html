@@ -1,0 +1,137 @@
+<!-- docs/sections/datasets.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Datasets | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Datasets</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a class="active" href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <h1>Datasets</h1>
+
+    <p>
+      In the BEI Toolbox, a <b>dataset</b> is the smallest top-level unit of organization.
+      A dataset represents a coherent collection of subjects acquired under a shared protocol and modality
+      (EEG, iEEG, MEG, or fMRI) as well as a stable diagnosis label policy. Dataset-level operations are 
+      designed to be deterministic: the same raw inputs and the same toolbox version should yield identical 
+      subject-level outputs, subject to upstream numerical libraries and platform differences.
+    </p>
+
+    <div class="callout">
+      <b>Key point</b>
+      <p style="margin:6px 0 0;">
+        Datasets in the GUI are primarily about discovery, indexing, and subject-level preprocessing.
+        Population-level energy metrics are computed at the <a href="studies.html">study</a> level.
+      </p>
+    </div>
+
+    <h2 id="definition">Definition</h2>
+    <p>A dataset is defined by four categories of information:</p>
+    <ul>
+      <li><b>Identity:</b> a stable name and a canonical folder root that points to the raw data organization.</li>
+      <li><b>Modality:</b> EEG, iEEG, MEG, or fMRI, which determines loaders, units, and labels.</li>
+      <li><b>Diagnosis policy:</b> mapping from raw metadata to standardized labels used in analysis.</li>
+      <li><b>Participant index:</b> reproducible subject identifiers and file pointers derived from a directory scan.</li>
+    </ul>
+
+    <h2 id="registration">Registration and metadata</h2>
+    <p>
+      When you load or define a dataset in the GUI, the toolbox registers it so it can be displayed in menus,
+      preprocessed, and used as a source of subjects for studies.
+    </p>
+
+    <pre><code>% Typical dataset fields (illustrative)
+dataset.name               % string, dataset identifier used in the GUI
+dataset.modality           % 'EEG' | 'iEEG' | 'MEG' | 'fMRI'
+dataset.patient_diagnosis  % diagnosis label for single-diagnosis datasets (optional)
+dataset.rootDir            % raw data root directory
+dataset.subDirs            % subject folder list or file list
+    </code></pre>
+
+    <h2 id="storage">Storage outputs</h2>
+    <p>
+      Dataset definition is saved as a MATLAB <code>.mat</code> file in the dataset’s <b>DS</b> folder. When you run preprocessing, the toolbox writes dataset-scoped <b>PDI</b> outputs in the dataset’s <b>PDI</b> folder. A PDI file contains a <code>patient_data</code> struct (typically an array with one element per subject) produced by the preprocessing pipeline.
+    </p>
+
+    <pre><code>BEI_ToolBox/
+  datasets_store/
+    &lt;NAME&gt;_&lt;MODALITY&gt;_&lt;DIAGNOSIS&gt;/
+      DS/
+        &lt;NAME&gt;_&lt;MODALITY&gt;_&lt;DIAGNOSIS&gt;_BEI_DS.mat
+      PDI/
+        PDI_&lt;timestamp&gt;.mat
+      PDO/
+        (reserved for outputs written by study-level analyses)</code></pre>
+
+    <p>
+      <b>Creating a dataset</b> (File → New Dataset) defines the dataset, creates the DS/PDI/PDO folders under <code>datasets_store</code>,
+      and saves a dataset definition file named <code>&lt;NAME&gt;_&lt;MODALITY&gt;_&lt;DIAGNOSIS&gt;_BEI_DS.mat</code>.
+      <b>Loading a dataset</b> (File → Load Dataset) reloads that definition from disk and registers it in the current GUI session.
+    </p>
+
+    <h2 id="pdi">PDI content model</h2>
+    <p>
+      A PDI is a MATLAB <code>.mat</code> file containing a <code>patient_data</code> struct (often a struct array with one element per subject). Each entry stores the preprocessed signal matrix and the minimal metadata required for downstream energy and entropy analysis (for example: patient code, modality, diagnosis, dataset identifier, and channel or ROI labels when available).
+    </p>
+
+    <div class="callout">
+      <b>Units matter</b>
+      <p style="margin:6px 0 0;">
+        In downstream energy and entropy computations, scale errors can mimic physiological effects.
+        The preprocessing pipeline should enforce consistent units before feature extraction.
+      </p>
+    </div>
+
+    <pre><code>patient_data.BIarray         % [T x C] preprocessed EEG/iEEG/MEG/fMRI time series
+patient_data.chan_labels     % [1 x C] channel or ROI labels
+patient_data.patient_code    % e.g., 'sub-XXXX'
+patient_data.diagnosis       % standardized diagnosis label
+patient_data.modality        % 'EEG' | 'MEG' | 'fMRI' | 'iEEG'
+patient_data.dataset         % dataset name
+patient_data.A               % optional state matrices (if computed)</code></pre>
+
+    <h2 id="recommended">Recommended practices</h2>
+    <ul>
+      <li><b>Keep dataset names stable.</b> Dataset names are used in registry keys and folder paths.</li>
+      <li><b>Do not mix modalities or diagnoses inside a dataset.</b> Comparisons belong at the study level.</li>
+    </ul>
+
+    <div class="footer">
+      Next: group datasets into <a href="studies.html">studies</a> for population metrics and model evaluation.
+    </div>
+  </main>
+</div>
+</body>
+</html>

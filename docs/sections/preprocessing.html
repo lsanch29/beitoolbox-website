@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Preprocessing | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+<aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Preprocessing</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a class="active" href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+  <main class="main">
+<h1>Preprocessing</h1>
+
+    <p>
+      Preprocessing converts raw neurophysiological recordings into a standardized representation suitable for downstream energy, coupling, and entropy-based analysis. In the BEI Toolbox, preprocessing is designed to be
+      <b>deterministic</b>, <b>unit-consistent</b>, and <b>label-aligned</b>.
+      The output of preprocessing is a standardized subject-level <code>patient_data</code> struct saved as a MATLAB <code>.mat</code> file for each subject. During preprocessing, the toolbox writes these files into a <code>mat-files</code> folder under the preprocessing output directory (typically the dataset PDI directory). These subject files are the stable computational input for downstream plotting, study assembly, and energy-metrics computation.
+    </p>
+
+    <h2 id="principles">Scientific principles</h2>
+    <ul>
+      <li><b>Signal integrity</b>: remove or attenuate artifacts that introduce non-neural structure into energy distributions.</li>
+      <li><b>Comparable units</b>: enforce consistent units within a modality (microvolts for EEG, consistent convention for MEG).</li>
+      <li><b>Label alignment</b>: channel labels or ROI names must match the time series columns and be handled explicitly if missing.</li>
+      <li><b>Provenance</b>: record the preprocessing recipe, toolbox version, and key parameters.</li>
+    </ul>
+
+    <div class="callout">
+      <b>Determinism in practice</b>
+      <p style="margin:6px 0 0;">
+        If your pipeline uses stochastic components (for example certain ICA initializations), fix random seeds and
+        store algorithm configurations. Prefer deterministic alternatives where feasible.
+      </p>
+    </div>
+
+    <h2 id="pipeline">Pipeline structure</h2>
+    <ol>
+      <li><b>Discovery</b>: locate subject files and resolve identifiers.</li>
+      <li><b>Loading</b>: import raw signals using modality-specific readers (EEGLAB, FieldTrip, SPM).</li>
+      <li><b>Cleaning</b>: filtering, artifact correction, and bad channel handling.</li>
+      <li><b>Standardization</b>: resampling if required, unit enforcement, label mapping, and formatting.</li>
+      <li><b>Persistence</b>: write a PDI file containing <code>patient_data</code> with provenance metadata.</li>
+    </ol>
+
+    <h2 id="eeg">EEG preprocessing</h2>
+    <ul>
+      <li>Bandpass filtering consistent with the analysis band of interest.</li>
+      <li>Notch filtering for line noise when appropriate for the acquisition environment.</li>
+      <li>Bad channel identification and a recorded interpolation strategy if used.</li>
+      <li>Artifact correction, commonly ICA-based, with explicit component rejection criteria.</li>
+    </ul>
+
+    <div class="callout">
+      <b>Flat or low-amplitude segments</b>
+      <p style="margin:6px 0 0;">
+        Some EEG recordings contain initial calibration or impedance-check intervals with near-flat signals.
+        These segments can bias energy distributions toward low-energy states and should be detected and removed
+        using objective criteria before downstream feature extraction.
+      </p>
+    </div>
+
+    <h2 id="meg">MEG preprocessing</h2>
+    <ul>
+      <li>Bad channel exclusion and consistent sensor selection.</li>
+      <li>Filtering and optional resampling to match analysis assumptions.</li>
+      <li>ICA and automated artifact labeling when rank supports decomposition.</li>
+      <li>Unit scaling enforcement to avoid artificial variance compression or inflation.</li>
+    </ul>
+    <p>
+      The MEG pipeline should explicitly handle the corner case where data rank is zero or too low for ICA.
+      In such cases, skip ICA and proceed with conservative filtering and robust checks.
+    </p>
+
+    <h2 id="fmri">fMRI preprocessing</h2>
+    <ul>
+      <li>Coregistration and spatial normalization to standard space consistent with the chosen atlas.</li>
+      <li>Temporal filtering consistent with resting-state assumptions and the sampling rate (TR).</li>
+      <li>ROI extraction using a fixed atlas with explicit handling of missing ROIs.</li>
+      <li>Output formatting as a <code>[T x R]</code> matrix with ROI labels aligned to columns.</li>
+    </ul>
+
+    <h2 id="outputs">Outputs and provenance</h2>
+    <p>Each preprocessing run writes a PDI file that includes at minimum:</p>
+    <ul>
+      <li>Preprocessed time series (for example <code>eegarray</code>, <code>fMRIarray</code>, or <code>megarray</code>) and channel or ROI labels</li>
+      <li>Subject identifier, diagnosis label, modality, dataset name</li>
+      <li>Toolbox version and preprocessing parameter snapshot</li>
+      <li>Optional intermediate outputs needed to reproduce derived features</li>
+    </ul>
+
+    <pre><code>datasets_store/&lt;DATASET_NAME&gt;/PDI/PDI_&lt;PATIENT_CODE&gt;_v&lt;VERSION&gt;.mat</code></pre>
+
+    <div class="footer">
+      Next: compute and visualize subject-specific metrics in
+      <a href="subject_level_analysis.html">Subject-level analysis</a>.
+    </div>
+  </main>
+</div>
+</body>
+</html>

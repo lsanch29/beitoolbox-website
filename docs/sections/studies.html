@@ -1,0 +1,184 @@
+<!-- docs/sections/studies.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Studies | BEI Toolbox User Manual</title>
+  <meta name="description" content="Studies in the BEI Toolbox: cohort assembly, internal controls, and PDI outputs."/>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Studies</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a class="active" href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <h1>Studies</h1>
+
+    <p>
+      A <b>study</b> is a population-level construct: it specifies a cohort composed of two or more datasets
+      and defines how subjects are pooled for group statistics, energy distribution modeling, and downstream classification.
+      Studies are the unit at which the toolbox produces reproducible population artifacts and summarizes results across
+      diagnoses and modalities.
+    </p>
+
+    <div class="callout">
+      <b>Why studies exist</b>
+      <p style="margin:6px 0 0;">
+        Most BEI properties are defined on distributions and network structure across subjects, not on a single recording.
+        Studies provide the statistical container needed to estimate equal energy allocation, coupling proxies, and entropy-derived
+        indices under consistent assumptions.
+      </p>
+    </div>
+
+    <h2 id="definition">Definition</h2>
+
+    <p>
+      A <span class="k">study</span> is a study-scoped container that references two or more datasets and produces population-level outputs.
+      Studies are created from the registered datasets in the current session and are saved under <code>studies_store</code>.
+    </p>
+
+    <p>
+      When you define a study, you select one or more datasets and provide a short study name.
+      The name must be 1 to 12 characters and contain only letters and digits.
+      The toolbox then creates a dedicated study folder and three subfolders for study artifacts:
+      <code>SS/</code> (study definition), <code>PDI/</code> (study population snapshots), and <code>PDO/</code> (study-level outputs).
+    </p>
+
+    <pre><code>studies_store/
+  &lt;STUDY_NAME&gt;/
+    SS/&lt;STUDY_NAME&gt;_BEI_ST.mat
+    PDI/
+    PDO/</code></pre>
+
+    <p>
+      The study definition file (<code>*_BEI_ST.mat</code>) contains a <code>study</code> struct with pointers to the selected datasets (<code>study.refs</code>),
+      plus summary metadata such as total subject count, modalities, and diagnoses.
+    </p>
+
+    <p>
+      To load an existing study, use <span class="k">File → Load Study</span> and select a <code>*_BEI_ST.mat</code> file from <code>studies_store</code>.
+      Loading a study activates it for the Plot, Energy Metrics, and Testing menus.
+    </p>
+
+
+<h2 id="cohorts">Cohort assembly</h2>
+
+    <p>
+      Study cohort assembly is performed from dataset-level preprocessing outputs.
+      For each selected dataset, the toolbox locates the dataset <code>PDI/</code> directory and loads the most recent <code>PDI_*.mat</code> file.
+      The <code>patient_data</code> entries from all selected datasets are concatenated into a single in-memory cohort.
+    </p>
+
+    <p>
+      After dataset subjects are merged, the toolbox may append internal Healthy Control subjects based on the modalities present in the study.
+      The final concatenated <code>patient_data</code> struct array is saved as a versioned study-level PDI file under the study <code>PDI/</code> directory.
+    </p>
+
+    <p>
+      The version number is incremented automatically so that prior cohort snapshots remain available for traceability.
+    </p>
+
+<h2 id="pdi">PDI outputs</h2>
+    <p>
+      The primary persistent artifact at the study level is a <b>PDI</b> file (Population Data Interface).
+      A PDI is a MATLAB <code>.mat</code> file that contains the concatenated <code>patient_data</code> struct array for all subjects included in the study. When a study is defined, the toolbox loads the most recent dataset-level PDI from each selected dataset, concatenates them, optionally appends internal healthy control subjects (one internal cohort per modality), and writes a versioned study-level PDI under the study's <code>PDI/</code> directory.</p>
+
+    <pre><code>BEI_ToolBox/
+  studies_store/
+    &lt;STUDY_NAME&gt;/
+      SS/
+        &lt;STUDY_NAME&gt;_BEI_ST.mat
+      PDI/
+        PDI_&lt;NDIAG&gt;D_&lt;STUDY_NAME&gt;_v&lt;N&gt;.mat
+      PDO/
+        PDO_&lt;NDIAG&gt;D_&lt;STUDY_NAME&gt;_v&lt;N&gt;.mat</code></pre>
+
+    <p>
+      A PDI should be treated as a versioned snapshot. Whenever you change study membership or recompute population features,
+      write a new PDI and keep the prior one for traceability.
+    </p>
+
+    <h3>Typical PDI content</h3>
+    <pre><code>% Illustrative, exact fields may vary by toolbox version
+PDI.patient_data          % array of patient_data structs (possibly reduced)
+PDI.study_name            % string
+PDI.created_at            % timestamp
+PDI.toolbox_version       % version string
+PDI.datasets_included     % list of dataset names
+PDI.n_subjects            % resolved subject count
+PDI.notes                 % optional</code></pre>
+
+    <div class="callout">
+      <b>Avoid accidental empty entries</b>
+      <p style="margin:6px 0 0;">
+        When building the cohort, filter out any uninitialized structs so downstream tables do not break due to size mismatches.
+        A simple rule is to keep only entries that contain required fields such as <code>patient_code</code> and <code>diagnosis</code>.
+      </p>
+    </div>
+
+    <h2 id="internalhc">Internal controls</h2>
+
+    <p>
+      Studies can automatically include an internal Healthy Control reference cohort, even if those subjects are not part of the datasets you selected in the study picker.
+      This is used to ensure a consistent baseline for population plots and model evaluation across sessions.
+    </p>
+
+    <p>
+      Internal Healthy Control subjects are appended during study definition on a per-modality basis.
+      The toolbox inspects the modalities present in the selected datasets and, for each modality, loads the most recent internal PDI file and concatenates its <code>patient_data</code>
+      with the study cohort before writing the study-level PDI.
+    </p>
+
+    <pre><code>datasets_store/
+  BEI_EEG_HC/PDI/PDI_1D_*.mat
+  BEI_fMRI_HC/PDI/PDI_1D_*.mat
+  BEI_MEG_HC/PDI/PDI_1D_*.mat</code></pre>
+
+    <p>
+      If a modality has no internal cohort available on disk, the study is still created, but no internal subjects are appended for that modality.
+    </p>
+
+<h2 id="audits">Audits and quality gates</h2>
+    <p>Before computing energy metrics or training models, studies should pass basic quality checks:</p>
+    <ul>
+      <li><b>Label completeness</b>: every subject has diagnosis and modality labels.</li>
+      <li><b>Signal integrity</b>: no empty time series, consistent dimensions, consistent units.</li>
+      <li><b>Cohort balance visibility</b>: subject counts by diagnosis and modality are logged and displayed.</li>
+      <li><b>Reproducible provenance</b>: toolbox version and preprocessing recipes are discoverable from the PDI.</li>
+    </ul>
+
+    <div class="footer">
+      Next: <a href="preprocessing.html">Preprocessing</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

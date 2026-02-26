@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Energy metrics | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+<aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Energy metrics</div>
+
+    <nav class="nav">
+      <h3>Start here</h3>
+      <a href="../index.html">Home</a>
+      <a href="overview.html">Overview</a>
+      <a href="core-concepts.html">Core concepts</a>
+      <a href="menus.html">Menus</a>
+      <a href="getting-started.html">Getting started</a>
+
+      <h3>Using the toolbox</h3>
+      <a href="datasets.html">Datasets</a>
+      <a href="studies.html">Studies</a>
+      <a href="preprocessing.html">Preprocessing</a>
+      <a href="subject_level_analysis.html">Subject-level analysis</a>
+      <a href="internal_datasets.html">Internal datasets</a>
+      <a class="active" href="energy_metrics.html">Energy metrics</a>
+      <a href="population_level_analysis.html">Population-level analysis</a>
+      <a href="models_and_testing.html">Models and testing</a>
+      <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+
+      <h3>Help</h3>
+      <a href="faq.html">FAQ and troubleshooting</a>
+      <a href="license-citation.html">License and citation</a>
+    </nav>
+  </aside>
+  <main class="main">
+<div class="breadcrumb">User Manual / Energy Metrics</div>
+    <h1>Energy Metrics</h1>
+    <p>
+      Energy metrics summarize how energy is allocated across brain regions and how regions covary in their energy fluctuations.
+      In the BEI Toolbox, energy metrics are computed at the <span class="k">study level</span> so that estimation and inference are
+      performed on a fixed cohort definition and are directly comparable across diagnosis groups.
+    </p>
+
+    <h2 id="scope">Scope</h2>
+    <div class="callout">
+      <div class="k">Design decision</div>
+      <p class="muted" style="margin:6px 0 0;">
+        The toolbox does not need to compute population energy metrics for standalone datasets.
+        Dataset preprocessing produces PDO files; population energy modeling is performed on studies.
+      </p>
+    </div>
+
+    <p>
+      This separation enforces a clear scientific boundary:
+      subject artifacts are deterministic transforms of raw recordings, while population artifacts depend on cohort definition,
+      group labeling, and inferential choices.
+    </p>
+
+    <h2 id="estimands">Estimands</h2>
+    <p>
+      Energy metrics in this toolbox generally target two estimands:
+    </p>
+    <div class="grid">
+      <div class="card">
+        <div class="k">Distribution of windowed energy</div>
+        <p class="muted">
+          For each region, estimate the empirical distribution of windowed energy samples pooled across subjects in a group.
+          This supports modeling heavy tails and testing equal energy allocation.
+        </p>
+      </div>
+      <div class="card">
+        <div class="k">Cross-region covariance structure</div>
+        <p class="muted">
+          Estimate covariance or correlation between regional energy time series, either within subject then pooled,
+          or directly on pooled representations, depending on the metric definition.
+        </p>
+      </div>
+    </div>
+
+    <h2 id="pdfcov">Energy time series and subject metrics</h2>
+    <p>
+      The energy-metrics pipeline in the toolbox is two-stage:
+    </p>
+    <ol>
+      <li>
+        <span class="k">Compute a windowed energy time series</span> for each subject and region by aggregating signal amplitude over
+        consecutive analysis windows (for example using the segmentation returned by <code>file_analysis</code>).
+        The resulting energy matrix is then normalized by its global maximum so values lie in <code>[0,1]</code>.
+      </li>
+      <li>
+        <span class="k">Compute per-subject metrics</span> from the normalized energy matrix. These values are stored for population-level
+        plotting and statistical testing.
+      </li>
+    </ol>
+
+    <p>
+      The current implementation computes the following per-subject outputs:
+    </p>
+    <ul>
+      <li><span class="k">Sample moments:</span> <code>sample_mu</code> and <code>sample_var</code> of normalized energy (pooled across windows and regions).</li>
+      <li><span class="k">Lognormality:</span> multivariate lognormal fit log-likelihood (<code>log_likelihood</code>) computed on <code>log(energy_norm + eps)</code>.</li>
+      <li><span class="k">Equal Energy Distribution (EED):</span> distribution similarity across regions using a combination of Jensen–Shannon divergence and KS distance (<code>EED</code>).</li>
+      <li><span class="k">Coupling Ratio (CR):</span> mean off-diagonal covariance relative to mean diagonal covariance of regional energy (<code>coupling_ratio</code>).</li>
+      <li><span class="k">Energy Variance (VR):</span> mean diagonal covariance of regional energy (<code>energy_variance</code>).</li>
+      <li><span class="k">Brain Stability (BS):</span> an aggregate stability score derived from the implied multivariate lognormal parameters (<code>BS</code>).</li>
+    </ul>
+
+    <pre><code>% Conceptual representation (per subject)
+BI_array:        [T x C] preprocessed time series (channels or ROIs)
+energy_norm:     [nWin x C] windowed energy, normalized to [0,1]
+outputest(p):    struct of metrics for subject p</code></pre>
+<h2 id="quality">Quality controls</h2>
+    <p>
+      Energy metrics are sensitive to preprocessing failures and cohort inconsistencies. Recommended checks include:
+    </p>
+    <ul>
+      <li><span class="k">Unit checks:</span> verify comparable scale within modality before pooling.</li>
+      <li><span class="k">Window parameter integrity:</span> ensure consistent window length and overlap across subjects.</li>
+      <li><span class="k">Label consistency:</span> confirm channel or ROI order matches labels for every subject.</li>
+      <li><span class="k">Outlier diagnostics:</span> identify subjects with extreme distributions that may indicate artifacts.</li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="k">Pooling is a modeling choice</div>
+      <p class="muted" style="margin:6px 0 0;">
+        Pooling across subjects increases statistical power but can hide subgroup structure.
+        When appropriate, compute group PDFs and also inspect subject-level PDFs to ensure the population estimate is meaningful.
+      </p>
+    </div>
+
+    <h2 id="outputs">Outputs</h2>
+    <p>
+      Study-level energy metrics are written to the study <span class="k">PDO</span> directory as a versioned MAT file that contains
+      an <code>outputest</code> struct array. Each entry corresponds to one subject in the study PDI and includes the computed energy metrics
+      along with identifying fields (patient code, diagnosis, modality, dataset).
+    </p>
+
+    <pre><code>studies_store/&lt;STUDY_NAME&gt;/
+  PDI/PDI_*.mat
+  PDO/PDO_&lt;SOURCE&gt;_v&lt;N&gt;.mat    (contains: outputest)</code></pre>
+
+    <p>
+      Always treat the study PDI as the cohort snapshot that anchors each <code>outputest</code> artifact.
+      If cohort membership or parameters change, recompute energy metrics to generate a new versioned PDO file.
+    </p>
+
+    <div class="callout">
+      <div class="k">Next</div>
+      <p class="muted" style="margin:6px 0 0;">
+        After energy metrics are computed, the toolbox can generate group comparisons and summary plots described in
+        <a href="population_level_analysis.html">Population-Level Analysis</a>.
+      </p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

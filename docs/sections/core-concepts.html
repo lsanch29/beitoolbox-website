@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Core concepts | BEI Toolbox User Manual</title>
+  <link rel="stylesheet" href="../bei.css"/>
+</head>
+<body>
+<div class="container">
+  <aside class="sidebar">
+    <div class="brand">BEI Toolbox User Manual</div>
+    <div class="version">Core concepts</div>
+    <nav class="nav">
+  <h3>Start here</h3>
+  <a href="../index.html">Home</a>
+  <a href="overview.html">Overview</a>
+  <a class="active" href="core-concepts.html">Core concepts</a>
+  <a href="menus.html">Menus</a>
+  <a href="getting-started.html">Getting started</a>
+  <h3>Using the toolbox</h3>
+  <a href="datasets.html">Datasets</a>
+  <a href="studies.html">Studies</a>
+  <a href="preprocessing.html">Preprocessing</a>
+  <a href="subject_level_analysis.html">Subject-level analysis</a>
+  <a href="energy_metrics.html">Energy metrics</a>
+  <a href="population_level_analysis.html">Population-level analysis</a>
+  <a href="models_and_testing.html">Models and testing</a>
+  <a href="internal_datasets.html">Internal datasets</a>
+  <a href="registries_and_reproducibility.html">Registries and reproducibility</a>
+  <h3>Help</h3>
+  <a href="faq.html">FAQ and troubleshooting</a>
+  <a href="license-citation.html">License and citation</a>
+</nav>
+  </aside>
+
+  <main class="main">
+    <h1>Core concepts</h1>
+
+    <h2>Dataset</h2>
+    <p>
+      In BEI Toolbox, a <b>dataset</b> is a collection of participants brain imaging recordings from one source (center) that are processed under a consistent
+      set of assumptions/parameters. A dataset typically corresponds to a directory tree containing participant folders or files, and the dataset definition stores pointers to those locations,
+      declared modality (EEG, iEEG, MEG, or fMRI) and unique diagnosis.
+    </p>
+
+    <ul>
+      <li>Datasets are the unit of <b>preprocessing</b> and <b>subject-level plots</b>.</li>
+      <li>Datasets are loaded without preprocessing.</li>
+      <li>Datasets do not require other datasets to exist.</li>
+    </ul>
+
+    <h2>Study</h2>
+    <p>
+      A <b>study</b> is a user-defined grouping of <b>two or more datasets</b> that enables population-level statistics and
+      consistent cohort comparisons. Studies are designed for multi-diagnosis and multi-modality analysis.
+    </p>
+
+    <ul>
+      <li>Studies are the unit of <b>population-level plots</b> and <b>model evaluation</b>.</li>
+      <li>Studies contain references to datasets rather than duplicating raw data.</li>
+      <li>Studies include “internal datasets” that are synthesized from existing processed subjects.</li>
+    </ul>
+
+    <div class="callout">
+      <b>Rule of thumb:</b> If you want group statistics, build a study. If you want to inspect individual subjects, use datasets.
+    </div>
+
+    <h2>Dataset storage and non-replication</h2>
+    <p>
+      Datasets are saved inside <code>datasets_store/</code> under a folder named
+      <code>&lt;dataset-modality-diagnosis&gt;</code>. The dataset definition is lightweight and stores
+      pointers to where raw data are located. BEI Toolbox does not copy or replicate the raw recordings.
+    </p>
+
+    <h2>PDI (Product Data Input)</h2>
+    <p>
+      When preprocessing completes successfully, BEI Toolbox writes a Product Data Input file inside the dataset
+      <code>PDI/</code> directory. The PDI contains a <code>patient_data</code> structure with one entry per participant.
+    </p>
+
+    <h3>patient_data entry fields</h3>
+    <ul>
+      <li><b>participant_code</b></li>
+      <li><b>diagnosis</b></li>
+      <li><b>modality</b></li>
+      <li><b>dataset</b></li>
+      <li><b>brain imaging array</b> (for example <code>eegarray</code>, <code>megarray</code>, or <code>fMRIarray</code>)</li>
+    </ul>
+
+    <h2>Study storage and non-replication</h2>
+    <p>
+      Studies are saved inside <code>study_store/</code> under a folder named <code>&lt;study-name&gt;</code>.
+      A study stores references to its constituent datasets. Raw data are not replicated.
+    </p>
+
+    <h2>Energy metrics and BEI properties</h2>
+    <p>
+      BEI Toolbox computes a family of energy-based metrics from participant PDIs of a study and aggregates them for population analysis.
+      Different metrics support different statistical properties, for example equal allocation of energy across regions,
+      coupling behavior, and variance structure across subjects or groups.
+    </p>
+    <h2>PDO (Product Data Output)</h2>
+    <p>
+      When energy metrics are computed successfully for a study, BEI Toolbox writes a Product Data Output file inside the study
+      <code>PDO/</code> directory. The PDO contains an <code>outputest</code> structure with one entry per participant.
+    </p>
+
+    <h3>outputest entry fields</h3>
+    <ul>
+      <li><b>participant_code</b></li>
+      <li><b>diagnosis</b></li>
+      <li><b>dataset</b></li>
+      <li><b>sample mean</b></li>
+      <li><b>sample variance</b></li>
+      <li><b>log-likelihood</b></li>
+      <li><b>EED</b> (Equal Energy Distribution)</li>
+      <li><b>coupling Ratio</b></li>
+      <li><b>variance Ratio</b></li>
+      <li><b>brain stability</b></li>
+      <li><b>modality</b></li>
+    </ul>
+
+    <div class="note">
+      Metrics are operational. They are defined so that they can be computed consistently across datasets and modalities, with reproducible preprocessing gates.
+    </div>
+
+    <h2>Testing results</h2>
+    <p>
+      When a trained model is tested with a selected study, the results are saved in <code>testing_store/</code> as
+      <code>BEI_TestResults_&lt;StudyName&gt;.mat</code>. The file contains a <code>BEI_TestResults</code> table
+      summarizing study name, model name, diagnosis labels, predicted labels, BEI scores, energy metrics, confusion matrix,
+      performance metrics, and thresholds.
+    </p>
+
+    <h2>Registries</h2>
+    <p>
+      Registries are stored in the BEItoolbox memory and act as the source of truth for workflow state. They exist to:
+    </p>
+    <ul>
+      <li>Track which datasets have been preprocessed.</li>
+      <li>Track which studies have computed energy metrics.</li>
+      <li>Track which studies have been tested with a model.</li>
+      <li>Enable or disable menus so users cannot run analysis steps in an invalid order.</li>
+    </ul>
+
+    <div class="footer">
+      Next: <a href="getting-started.html">Getting started</a> for the end-to-end workflow.
+    </div>
+  </main>
+</div>
+</body>
+</html>
