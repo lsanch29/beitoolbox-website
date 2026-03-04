@@ -42,10 +42,19 @@
       Menu names may vary slightly by version, but the state gates and dependencies are the same.
     </p>
 
-    <h2>Step 1. Load datasets</h2>
+    <h2>Step 1. Create or Load Datasets</h2>
     <ul>
-      <li>Use the dataset loading menu to register one or more datasets.</li>
-      <li>Confirm each dataset appears in the GUI and the info panel shows dataset name, modality, and subject count.</li>
+      <li>Use <strong>File → New Dataset</strong> to define a dataset from raw data. When creating a dataset, specify:
+      <ul>
+        <li>Modality (EEG, MEG, iEEG, fMRI)</li>
+        <li>Diagnosis (Healthy Control, ADHD, Autism Spectrum Disorder, Epilepsy, Major Depressive Disorder, Obsessive Compulsive Disorder, Schizophrenia, Alzheimer’s Disease, Frontotemporal Dementia, Parkinson’s Disease, Traumatic Brain Injury, Tinnitus, Post-Traumatic Stress Disorder, Bipolar Disorder, Stroke, Tumor, Chronic Pain, Unknown)</li>
+        <li>Condition (Rest, Task, Unknown)</li>
+        <li>Center or Facility name</li>
+        <li>Dataset name</li>
+      </ul>
+    </li>
+    <li>Use <strong>File → Load Dataset</strong> to load a previously saved dataset from the <code>datasets_store</code> directory.</li>
+      <li>Confirm each dataset appears in the GUI and the Info Panel shows dataset name, modality, diagnosis, condition, center, and subject count.</li>
     </ul>
 
     <div class="note">
